@@ -182,8 +182,6 @@ $(function initmap() {
     $("#submitButton").click(function (event) {
         console.log("event:", event);
         // you need post form or form data by javascript
-
-
         event.preventDefault();
 
         window.form_data = $('#form').serialize();
@@ -195,13 +193,17 @@ $(function initmap() {
             dataType: 'json',
             data: form_data,
             success: function(data) {
-                console.log('submitsuccess');
+                console.log('eventID:', data);
                 // you need add marker that was submitted
-                let location = {
+                let eventData = {
+                    id: data.eventID,
+                    eventType: $('#eventType').val(),
+                    eventName: $('#eventName').val(),
                     latitude: marker.position.lat(), 
                     longitude: marker.position.lng()
+                    
                 };
-                addMarker(location);
+                addMarker(eventData);
             },
             error: function (request, status, error) {
                 console.log('submit error:', request.responseText);
@@ -228,6 +230,7 @@ $(function initmap() {
         // console.log('worked', data);
         // call typeahead's callback with search results (i.e., places)
         for (let k = 0; k < data.length; k++) {
+            console.log("data", data[k]);
             addMarker(data[k]);
             
         };
@@ -255,14 +258,27 @@ $(function initmap() {
 });
 
 function deleteMarker(markerId) {
- 
-    for (let i=0; i<markers.length; i++) {
-        
-        if (markers[i].id === markerId) {
-            console.log(markerId, markers[i]);
-            markers[i].setMap(null);
-        }
-    }
+    let parameters = {
+        eventID: markerId
+    };
+
+    $.getJSON(Flask.url_for("delete"), parameters)
+        .done(function(data, textStatus, jqXHR) {
+            // server delete successfuly, you will need to delete it from browser screen
+
+            for (let i=0; i<markers.length; i++) {
+                
+                if (markers[i].id === markerId) {
+                    console.log(markerId, markers[i]);
+                    markers[i].setMap(null);
+                }
+            }
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+
+            // log error to browser's console
+            console.log(errorThrown.toString());
+        });
 }
 
 
@@ -319,16 +335,17 @@ function placeMarker(location) {
  * Adds marker for place to map.
  */
  function addMarker(data) {
-    marker_counter ++;
+    // marker_counter ++;
     let mk = new google.maps.Marker({
         map: map,
-        position: {"lat": data['latitude'],"lng": data['longitude']},
-        id: marker_counter
+        position: {"lat": data.latitude,"lng": data.longitude},
+        id: data.id
     });
     // console.log(mk);
     markers.push(mk);
-    let deleteButton = '<button id="deleteButton" data-id="' + marker_counter + '">Delete</button>' +
-    '<p>' + data['eventType'] + '</p>';
+    let deleteButton = '<button id="deleteButton" data-id="' + data.id + '">Delete</button>' +
+    '<p>' + data.eventType + '</p>' +
+    '<p>' + data.eventName + '</p>';
 
     google.maps.event.addListener(mk, 'click', function () {
         info.setContent(deleteButton);
@@ -491,7 +508,7 @@ function removeMarkers()
 function search(query, syncResults, asyncResults)
 {
     // get places matching query (asynchronously)
-    var parameters = {
+    let parameters = {
         q: query
     };
     $.getJSON(Flask.url_for("search"), parameters)
@@ -548,7 +565,7 @@ function update()
     var sw = bounds.getSouthWest();
 
     // get places within bounds (asynchronously)
-    var parameters = {
+    let parameters = {
         ne: ne.lat() + "," + ne.lng(),
         q: $("#q").val(),
         sw: sw.lat() + "," + sw.lng()

@@ -42,9 +42,9 @@ html, body, #map-canvas, .container-fluid
     text-align: center;
 }
 
-#eventType {
-    align-content: center;
-}
+/*#eventType {
+    option: center;
+}*/
 
 #position {
     text-align: center;

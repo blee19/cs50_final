@@ -47,9 +47,19 @@ def index():
 
     return render_template("index.html", key=os.environ.get("API_KEY"))
 
-@app.route("/submit", methods=["POST", "GET"])
+@app.route("/delete")
+def delete():
+    
+    eventID = request.args.get("eventID")
+
+    db.execute('DELETE FROM events WHERE id = ' + eventID)
+    conn.commit()
+
+    return '{"message": "OK"}'
+
+# delete from events where id=1;
+@app.route("/submit", methods=["POST"])
 def submit():
-    # if request.method == "POST":
     eventName = request.form.get("eventName")
     datetime = request.form.get("datetime")
 
@@ -73,13 +83,16 @@ def submit():
     longitude = latlong[1]
 
     sql_info = (eventName, month, day, year, hour, minutes, AM_PM, eventType, latitude, longitude)
-    db.execute('INSERT INTO events VALUES (?,?,?,?,?,?,?,?,?,?)', sql_info)
+    db.execute('INSERT INTO events (eventName, month, day, year, hour, minute, AM_PM, eventType, latitude, longitude) VALUES (?,?,?,?,?,?,?,?,?,?)', sql_info)
 
     # Save (commit) the changes and (close) them
     conn.commit()
     
+    db.execute('SELECT id from events ORDER BY id DESC LIMIT 1')
+
+    eventID = db.fetchone()[0]
     # return redirect(url_for("index"))
-    return '{"message": "OK"}'
+    return '{"eventID": ' + str(eventID) + '}'
 
 @app.route("/query")
 def query():
@@ -95,7 +108,8 @@ def query():
                 'AM_PM': row[6],
                 'eventType': row[7],
                 'latitude': row[8],
-                'longitude': row[9]
+                'longitude': row[9],
+                'id': row[10]
         }
         marker_data.append(data)
 
