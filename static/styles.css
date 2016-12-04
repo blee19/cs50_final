@@ -38,6 +38,18 @@ html, body, #map-canvas, .container-fluid
     text-align: center;
 }
 
+#eventName {
+    text-align: center;
+}
+
+#eventType {
+    align-content: center;
+}
+
+#position {
+    text-align: center;
+}
+
 #date-cont {
     width:100%;
     padding: 0 300pt;
