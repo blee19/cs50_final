@@ -281,65 +281,66 @@ function deleteMarker(markerId) {
         });
 }
 
-
-// function that builds a list of articles. 
-function buildArticleList(articles) {
-    var list = [];
-    articles.forEach(function(article) {
-        // append each article to list in this format
-        list.push(`<li><a href="${article.link}">${article.title}</a></li>`);
-    });
-    // envelope in the ul tags
-    return '<ul>' + list.join('') + '</ul>';
-}
-
-function addSQLMarker(position) {
-    var marker = new google.maps.Marker({
-        map: map,
-        position: {lat: position.lat, lng: position.lng}
-    })
-
-    // var contentString = '<div id="content">'+
-    //     '<div id="siteNotice">'+
-    //     '</div>'+
-    //     '<h1 id="firstHeading" class="firstHeading">plz work</h1>'+
-    //     '</div>'+
-    //     '</div>';
-    var contentString = 'lolol'
-    var infowindow = new google.maps.InfoWindow({
-        content: contentString
-    });
-
-    marker.addListener('click', function() {
-        infowindow.open(map, marker);
-    });
-}
-
-
-
 /**
 * places 1 marker and one marker only when I click on the map
 */
 function placeMarker(location) {
-  if ( marker ) {
-    marker.setPosition(location);
-  } else {
-    marker = new google.maps.Marker({
-      position: location,
-      map: map
-    });
-  }
+    // custom icon
+    var image = {
+        url: 'http://maps.google.com/mapfiles/ms/micons/blue-pushpin.png',
+        size: new google.maps.Size(32, 32),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(0, 32)
+    }
+    if ( marker ) {
+        marker.setPosition(location);
+    } else {
+        marker = new google.maps.Marker({
+            position: location,
+            map: map,
+            icon: image
+        });
+    }
 }
 
 /**
  * Adds marker for place to map.
  */
  function addMarker(data) {
-    // marker_counter ++;
+
+    if (data.eventType === 'Free Food Event') {
+        var icon = 'http://maps.google.com/mapfiles/ms/micons/restaurant.png'
+
+    } else if (data.eventType === 'Academic Event') {
+        var icon = {
+            url: 'http://maps.google.com/mapfiles/kml/pal3/icon30.png',
+            size: new google.maps.Size(32, 32),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(0, 32)
+        }
+
+    } else if (data.eventType === 'Celebrity Sighting'){
+        var icon = {
+            url: 'https://d30y9cdsu7xlg0.cloudfront.net/png/21661-200.png',
+            scaledSize: new google.maps.Size(28, 28),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(0, 32)
+        }
+
+    } else {
+        var icon = {
+            url: 'http://www.freeiconspng.com/uploads/turkey-thanksgiving-png-0.png',
+            scaledSize: new google.maps.Size(29, 29),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(0, 32)
+        }
+    }
+
     let mk = new google.maps.Marker({
         map: map,
         position: {"lat": data.latitude,"lng": data.longitude},
-        id: data.id
+        id: data.id,
+        icon: icon
     });
     // console.log(mk);
     markers.push(mk);
@@ -353,66 +354,30 @@ function placeMarker(location) {
     });
  }
 
-// function addMarker(place)
-// {
-//     // make marker variable
-//     var marker = new google.maps.Marker({
-//         map: map,
-//         // position: {lat: place.latitude, lng: place.longitude},
-//         position: place, // from gmaps API
-//         animation: google.maps.Animation.DROP,
-//         // label: place.lng()+ ", " + place.lng()
-//     });
-//     var infowindow = new google.maps.InfoWindow({
-//         content: place.lng()+ ", " + place.lng()
-//     });
 
-//     // add listener to that marker
-//     marker.addListener('click', function() {
-//         infowindow.open(map, marker);
-//     });
-    
-//     // add to markers, a marker!
-//     markers.push(marker);
-//     console.log(markers);
-    
-//     // allows clicking
-//     marker.addListener('click', function() {
-        
-//         // get the json data of articles
-//         var url = '/articles?geo=' + place.postal_code;
-//         $.getJSON(url, function(articles) {
-//             console.log('article', articles);
-//             var content = buildArticleList(articles);
-//             showInfo(marker, content);
-//         });
-//     });
+// // Sets the map on all markers in the array.
+// function setMapOnAll(map) {
+//     for (let i = 0; i < markers.length; i++) {
+//       markers[i].setMap(map);
+//     }
+// }
+
+// // Removes the markers from the map, but keeps them in the array.
+// function clearMarkers() {
+//     setMapOnAll(null);
 // }
 
 
-// Sets the map on all markers in the array.
-function setMapOnAll(map) {
-    for (let i = 0; i < markers.length; i++) {
-      markers[i].setMap(map);
-    }
-}
+// // Shows any markers currently in the array.
+// function showMarkers() {
+//     setMapOnAll(map);
+// }
 
-// Removes the markers from the map, but keeps them in the array.
-function clearMarkers() {
-    setMapOnAll(null);
-}
-
-
-// Shows any markers currently in the array.
-function showMarkers() {
-    setMapOnAll(map);
-}
-
-// Deletes all markers in the array by removing references to them.
-function deleteMarkers() {
-    clearMarkers();
-    markers = [];
-}
+// // Deletes all markers in the array by removing references to them.
+// function deleteMarkers() {
+//     clearMarkers();
+//     markers = [];
+// }
 
 
 /**
