@@ -135,10 +135,8 @@ $(function initmap() {
     var options = {
         center: {lat: 42.3740, lng: -71.1170},  // Harvard yard
         disableDefaultUI: true,
-        // mapTypeId: google.maps.MapTypeId.ROADMAP,
         maxZoom: 22,
         panControl: true,
-        // styles: styles,
         zoom: 17, // 17 is just right to get whole yard in website frame
         zoomControl: true, // creates +/- sign on side of map to control zoom
         mapTypeControlOptions: {
@@ -164,24 +162,14 @@ $(function initmap() {
 
         $('#position').val(event.latLng.lat() + ', ' + event.latLng.lng());
         placeMarker(event.latLng);
-        // adds marker
-        // addMarker(event.latLng);
     });
 
-    // for (var i = 0; i < marker_data.length; i++) {
-    //     var lat = marker_data[i]['latitude'];
-    //     var long = marker_data[i]['longitude'];
-
-    //     latLng = new google.maps.LatLng(lat, long);
-    //     var marker = new google.maps.Marker({
-    //         map: map,
-    //         position: latLng
-    //     });
-    // };
-
+    // on submit button click:
+    // #submitButton is id of button tag in index.html
     $("#submitButton").click(function (event) {
-        console.log("event:", event);
-        // you need post form or form data by javascript
+        // to check and print values
+        // console.log("event:", event);
+
         event.preventDefault();
 
         window.form_data = $('#form').serialize();
@@ -200,8 +188,8 @@ $(function initmap() {
                     eventType: $('#eventType').val(),
                     eventName: $('#eventName').val(),
                     latitude: marker.position.lat(), 
-                    longitude: marker.position.lng()
-                    
+                    longitude: marker.position.lng(),
+                    time: $('#datetimepicker').val()
                 };
                 addMarker(eventData);
             },
@@ -290,7 +278,7 @@ function placeMarker(location) {
         url: 'http://maps.google.com/mapfiles/ms/micons/blue-pushpin.png',
         size: new google.maps.Size(32, 32),
         origin: new google.maps.Point(0, 0),
-        anchor: new google.maps.Point(0, 32)
+        anchor: new google.maps.Point(16, 32)
     }
     if ( marker ) {
         marker.setPosition(location);
@@ -316,7 +304,7 @@ function placeMarker(location) {
             url: 'http://maps.google.com/mapfiles/kml/pal3/icon30.png',
             size: new google.maps.Size(32, 32),
             origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(0, 32)
+            anchor: new google.maps.Point(16, 32)
         }
 
     } else if (data.eventType === 'Celebrity Sighting'){
@@ -324,7 +312,7 @@ function placeMarker(location) {
             url: 'https://d30y9cdsu7xlg0.cloudfront.net/png/21661-200.png',
             scaledSize: new google.maps.Size(28, 28),
             origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(0, 32)
+            anchor: new google.maps.Point(16, 32)
         }
 
     } else {
@@ -332,7 +320,7 @@ function placeMarker(location) {
             url: 'http://www.freeiconspng.com/uploads/turkey-thanksgiving-png-0.png',
             scaledSize: new google.maps.Size(29, 29),
             origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(0, 32)
+            anchor: new google.maps.Point(16, 32)
         }
     }
 
@@ -344,9 +332,10 @@ function placeMarker(location) {
     });
     // console.log(mk);
     markers.push(mk);
-    let deleteButton = '<button id="deleteButton" data-id="' + data.id + '">Delete</button>' +
+    let deleteButton = '<p> <b>' + data.eventName + ' </b> </p>' +
     '<p>' + data.eventType + '</p>' +
-    '<p>' + data.eventName + '</p>';
+    '<p>' + data.time + '</p>' +
+    '<button id="deleteButton" data-id="' + data.id + '">Delete</button>';
 
     google.maps.event.addListener(mk, 'click', function () {
         info.setContent(deleteButton);
