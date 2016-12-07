@@ -184,7 +184,7 @@ $(function initmap() {
             data: form_data,
             success: function(data) {
                 console.log('eventID:', data);
-                // you need add marker that was submitted
+                // submit these data in json to addMarker
                 let eventData = {
                     id: data.eventID,
                     eventType: $('#eventType').val(),
