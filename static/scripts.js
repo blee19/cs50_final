@@ -159,7 +159,9 @@ $(function initmap() {
     google.maps.event.addListenerOnce(map, "idle", configure);
 
     google.maps.event.addListener(map, "click", function(event) {
-
+        // this fits in the value in the html tag of id 'position' with 
+        // the values of the event's lat and lng, automatically updating
+        // the view of the marker's current position
         $('#position').val(event.latLng.lat() + ', ' + event.latLng.lng());
         placeMarker(event.latLng);
     });
