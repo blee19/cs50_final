@@ -7,11 +7,13 @@ var markers = [];
 var marker;
 
 // id
+// keep track of markers
 var marker_counter = 0;
 
 // info window
 var info = new google.maps.InfoWindow();
 
+// https://developers.google.com/maps/documentation/javascript/styling
 // execute when the DOM is fully loaded
 $(function initmap() {
 
@@ -130,10 +132,10 @@ $(function initmap() {
             ],
             {name: 'Styled Map'});
 
-    // options for map
+    // options for map, configure map
     // https://developers.google.com/maps/documentation/javascript/reference#MapOptions
     var options = {
-        center: {lat: 42.3740, lng: -71.1170},  // Harvard yard
+        center: {lat: 42.3740, lng: -71.1170},  // Harvard Yard
         disableDefaultUI: true,
         maxZoom: 22,
         panControl: true,
@@ -168,6 +170,7 @@ $(function initmap() {
 
     // on submit button click:
     // #submitButton is id of button tag in index.html
+    // when submit button is clicked
     $("#submitButton").click(function (event) {
         // to check and print values
         // console.log("event:", event);
@@ -193,6 +196,7 @@ $(function initmap() {
                     longitude: marker.position.lng(),
                     time: $('#datetimepicker').val()
                 };
+                // add marker with correct information
                 addMarker(eventData);
             },
             error: function (request, status, error) {
@@ -205,7 +209,7 @@ $(function initmap() {
 
     });
     
-
+    // delete marker when delete button is clicked
     google.maps.event.addListener(info, 'domready', function () {
         let button = document.getElementById('deleteButton');
         let id = parseInt(button.getAttribute('data-id'));  
@@ -214,6 +218,7 @@ $(function initmap() {
         };
     });
 
+    // 
     $.getJSON(Flask.url_for("query"))
     .done(function(data, textStatus, jqXHR) {
 
@@ -247,6 +252,7 @@ $(function initmap() {
     });
 });
 
+// delete marker 
 function deleteMarker(markerId) {
     let parameters = {
         eventID: markerId

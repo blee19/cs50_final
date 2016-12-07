@@ -47,6 +47,7 @@ def index():
 
     return render_template("index.html", key=os.environ.get("API_KEY"))
 
+# delete event upon clicking delete button
 @app.route("/delete")
 def delete():
     
@@ -98,6 +99,7 @@ def submit():
 def query():
     marker_data = []
 
+    # get event data from user
     for row in db.execute('SELECT * FROM events'):
         data = {'eventName': row[0],
                 'month': row[1],
@@ -113,6 +115,7 @@ def query():
         }
         marker_data.append(data)
 
+    # return JSON format of event data entered by user
     return jsonify(marker_data)
     
 
