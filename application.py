@@ -28,23 +28,6 @@ def index():
     if not os.environ.get("API_KEY"):
         raise RuntimeError("API_KEY not set")
 
-    # marker_data = []
-
-    # for row in db.execute('SELECT * FROM events'):
-    #     data = {'eventName': row[0],
-    #             'month': row[1],
-    #             'day': row[2],
-    #             'year': row[3],
-    #             'hour': row[4],
-    #             'minutes': row[5],
-    #             'AM_PM': row[6],
-    #             'eventType': row[7],
-    #             'latitude': row[8],
-    #             'longitude': row[9]
-    #     }
-# 
-    # marker_data.append(data)
-
     return render_template("index.html", key=os.environ.get("API_KEY"))
 
 # delete event upon clicking delete button
@@ -61,38 +44,25 @@ def delete():
 # delete from events where id=1;
 @app.route("/submit", methods=["POST"])
 def submit():
-    eventName = request.form.get("eventName")
-    datetime = request.form.get("datetime")
-
-    date_string = datetime.split(' ')
-    date = date_string[0].split('/')
-    month = date[0]
-    day = date[1]
-    year = date[2]
-
-    day_string = date_string[1].split(':')
-    hour = day_string[0]
-    minutes = day_string[1]
-
-    AM_PM = date_string[2]
-
-    eventType = request.form.get("eventType")
+    event_name = request.form.get("eventName")
+    date_time = request.form.get("datetime")
+    event_type = request.form.get("eventType")
     position = request.form.get("position")
 
     latlong = position.split(', ')
     latitude = latlong[0]
     longitude = latlong[1]
 
-    sql_info = (eventName, month, day, year, hour, minutes, AM_PM, eventType, latitude, longitude)
-    db.execute('INSERT INTO events (eventName, month, day, year, hour, minute, AM_PM, eventType, latitude, longitude) VALUES (?,?,?,?,?,?,?,?,?,?)', sql_info)
+    sql_info = (event_name, date_time, event_type, latitude, longitude)
+    db.execute('INSERT INTO events (event_name, date_time, event_type, latitude, longitude) VALUES (?,?,?,?,?)', sql_info)
 
-    # Save (commit) the changes and (close) them
+    # Save (commit) the changes
     conn.commit()
     
     db.execute('SELECT id from events ORDER BY id DESC LIMIT 1')
 
     eventID = db.fetchone()[0]
-    # return redirect(url_for("index"))
+
     return '{"eventID": ' + str(eventID) + '}'
 
 @app.route("/query")
@@ -101,17 +71,13 @@ def query():
 
     # get event data from user
     for row in db.execute('SELECT * FROM events'):
-        data = {'eventName': row[0],
-                'month': row[1],
-                'day': row[2],
-                'year': row[3],
-                'hour': row[4],
-                'minutes': row[5],
-                'AM_PM': row[6],
-                'eventType': row[7],
-                'latitude': row[8],
-                'longitude': row[9],
-                'id': row[10]
+
+        data = {'event_name': row[0],
+                'date_time': row[1],
+                'event_type': row[2],
+                'latitude': row[3],
+                'longitude': row[4],
+                'id': row[5]
         }
         marker_data.append(data)
 

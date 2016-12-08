@@ -4,9 +4,9 @@ var map;
 // markers for map
 var markers = [];
 
+// my clicking marker
 var marker;
 
-// id
 // keep track of markers
 var marker_counter = 0;
 
@@ -172,9 +172,6 @@ $(function initmap() {
     // #submitButton is id of button tag in index.html
     // when submit button is clicked
     $("#submitButton").click(function (event) {
-        // to check and print values
-        // console.log("event:", event);
-
         event.preventDefault();
 
         window.form_data = $('#form').serialize();
@@ -191,10 +188,10 @@ $(function initmap() {
                 let eventData = {
                     id: data.eventID,
                     eventType: $('#eventType').val(),
-                    eventName: $('#eventName').val(),
+                    event_name: $('#eventName').val(),
                     latitude: marker.position.lat(), 
                     longitude: marker.position.lng(),
-                    time: $('#datetimepicker').val()
+                    date_time: $('#datetimepicker').val()
                 };
                 // add marker with correct information
                 addMarker(eventData);
@@ -218,11 +215,11 @@ $(function initmap() {
         };
     });
 
-    // 
+    // when page is refreshed, it goes to this url
     $.getJSON(Flask.url_for("query"))
     .done(function(data, textStatus, jqXHR) {
 
-        // console.log('worked', data);
+        console.log('worked', data);
         // call typeahead's callback with search results (i.e., places)
         for (let k = 0; k < data.length; k++) {
             console.log("data", data[k]);
@@ -340,9 +337,9 @@ function placeMarker(location) {
     });
     // console.log(mk);
     markers.push(mk);
-    let deleteButton = '<p> <b>' + data.eventName + ' </b> </p>' +
+    let deleteButton = '<p> <b>' + data.event_name + ' </b> </p>' +
     '<p>' + data.eventType + '</p>' +
-    '<p>' + data.time + '</p>' +
+    '<p>' + data.date_time + '</p>' +
     '<button id="deleteButton" data-id="' + data.id + '">Delete</button>';
 
     google.maps.event.addListener(mk, 'click', function () {
@@ -350,32 +347,6 @@ function placeMarker(location) {
         info.open(map, mk);
     });
  }
-
-
-// // Sets the map on all markers in the array.
-// function setMapOnAll(map) {
-//     for (let i = 0; i < markers.length; i++) {
-//       markers[i].setMap(map);
-//     }
-// }
-
-// // Removes the markers from the map, but keeps them in the array.
-// function clearMarkers() {
-//     setMapOnAll(null);
-// }
-
-
-// // Shows any markers currently in the array.
-// function showMarkers() {
-//     setMapOnAll(map);
-// }
-
-// // Deletes all markers in the array by removing references to them.
-// function deleteMarkers() {
-//     clearMarkers();
-//     markers = [];
-// }
-
 
 /**
  * Configures application.
@@ -532,23 +503,7 @@ function update()
         q: $("#q").val(),
         sw: sw.lat() + "," + sw.lng()
     };
-    // $.getJSON(Flask.url_for("update"), parameters)
-    // .done(function(data, textStatus, jqXHR) {
 
-    //    // remove old markers from map
-    //    removeMarkers();
-
-    //    // add new markers to map
-    //    for (var i = 0; i < data.length; i++)
-    //    {
-    //        addMarker(data[i]);
-    //    }
-    // })
-    // .fail(function(jqXHR, textStatus, errorThrown) {
-
-    //     // log error to browser's console
-    //     console.log(errorThrown.toString());
-    // });
 };
 
 
