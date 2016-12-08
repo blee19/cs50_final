@@ -187,7 +187,7 @@ $(function initmap() {
                 // submit these data in json to addMarker
                 let eventData = {
                     id: data.eventID,
-                    eventType: $('#eventType').val(),
+                    event_type: $('#eventType').val(),
                     event_name: $('#eventName').val(),
                     latitude: marker.position.lat(), 
                     longitude: marker.position.lng(),
@@ -301,10 +301,10 @@ function placeMarker(location) {
  */
  function addMarker(data) {
 
-    if (data.eventType === 'Free Food Event') {
+    if (data.event_type === 'Free Food Event') {
         var icon = 'http://maps.google.com/mapfiles/ms/micons/restaurant.png'
 
-    } else if (data.eventType === 'Academic Event') {
+    } else if (data.event_type === 'Academic Event') {
         var icon = {
             url: 'http://maps.google.com/mapfiles/kml/pal3/icon30.png',
             size: new google.maps.Size(32, 32),
@@ -312,7 +312,7 @@ function placeMarker(location) {
             anchor: new google.maps.Point(16, 32)
         }
 
-    } else if (data.eventType === 'Celebrity Sighting'){
+    } else if (data.event_type === 'Celebrity Sighting'){
         var icon = {
             url: 'https://d30y9cdsu7xlg0.cloudfront.net/png/21661-200.png',
             scaledSize: new google.maps.Size(28, 28),
@@ -338,7 +338,7 @@ function placeMarker(location) {
     // console.log(mk);
     markers.push(mk);
     let deleteButton = '<p> <b>' + data.event_name + ' </b> </p>' +
-    '<p>' + data.eventType + '</p>' +
+    '<p>' + data.event_type + '</p>' +
     '<p>' + data.date_time + '</p>' +
     '<button id="deleteButton" data-id="' + data.id + '">Delete</button>';
 

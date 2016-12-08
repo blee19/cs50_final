@@ -41,33 +41,17 @@
         <!-- app's own JavaScript -->
         <script src="{{ url_for('static', filename='scripts.js') }}"></script>
 
-        <title> ~HARVARD LIVE~ </title>
+        <!-- title of our site -->
+        <title> ~HARVARD HIVE~ </title>
 
     </head>
     <body>
-        
 
         <!-- fill viewport -->
         <div class="container-fluid">
 
             <!-- https://developers.google.com/maps/documentation/javascript/tutorial -->
             <div id="map-canvas"></div>
-
-
-
-
-<!-- 
-            <html>
-                <head>
-                     <script type="text/javascript" {{ url_for('static', filename='scripts.js')}}></script>
-                     <script type="text/javascript">
-                        var marker_data = {{marker_data}};
-                        console.log(marker_data);
-                     </script>
-                </head>
-            </html> -->
-
-
 
             <!-- http://getbootstrap.com/css/#forms -->
             <div id="form-container">
@@ -80,9 +64,13 @@
                     <div class="col-sm-6">
                         <input class="form-control" id="eventName" name="eventName" placeholder="Event Name" type="text"/>
                     </div>
+
+                    <!-- This is the date time 'picker' that we got from bootstrap -->
                     <div class="col-sm-6">
                         <input type='text' class="form-control" id="datetimepicker" name="datetime" placeholder="Date and Time"/>
                     </div>
+
+                    <!-- Event type form (select from a list) -->
                     <div class="col-sm-6">
                         <select class="form-control" id= "eventType" name="eventType">
                             <option>Turkey Sighting</option>
@@ -91,13 +79,16 @@
                             <option>Academic Event</option>
                         </select>
                     </div>
-                        <div class="col-sm-6">
-                            <input class="form-control" id="position" name = "position" placeholder="Latitude and Longitude" type="text"/>
-                        </div>
+
+                    <!-- Latitude and longitude -->
+                    <div class="col-sm-6">
+                        <input class="form-control" id="position" name = "position" placeholder="Latitude and Longitude" type="text"/>
+                    </div>
+
+                    <!-- button for submitting ajax post methods! -->
                     <button id="submitButton" type="submit" class="btn btn-default">Submit</button>
                 </form>
             </div>
         </div>
-
     </body>
 </html>
