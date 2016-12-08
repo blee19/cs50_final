@@ -1,0 +1,15 @@
+Welcome to Harvard Hive [harvardhive.com].
+
+This site is a hub for what is going on on campus. It's up and running at harvardhive.com, so to access it, just type that into your browser and it should bring you to the right place.
+
+To run the site locally: first, download the code from https://github.com/blee19/cs50_final. Open terminal on your computer and navigate to the cs50_final folder. Once in there, use ". venv/bin/activate" to activate the virtual environment. Once activated, use "flask run" to run it locally by copy and pasting the localhost address into your browser!
+
+The whole site itself is an interactive map where all of the events are stored. Take a second and click around. There are 4 types of events, each with their own unique icon: turkey sightings, free food events, celebrity sightings and academic events. When you click on an icon, you’ll see an infobox pop up. In that infobox is the following information: the event name, the type of event (from the four listed above), the date and time of the event and a delete button.
+
+You can also enter your own event. At the top of the screen is the toolbar to do so. The first box on the left is where you’ll enter the name of the event, the next box is the date and time of the event. Upon clicking the date and time entry, it will first automatically fill with the current date and time - in order to set a date and time, click the right date on the calendar as well as the clock icon at the bottom to set your time. The next box is a list where you can choose which type of event it is, from the four options listed earlier. Finally, the fourth box is the location (exact latitude and longitude) of the event - you can go ahead and enter the exact latitude and longitude (if that’s something you, impressively, happen to know), or you can also click around the map and you will see a blue pin follow your mouse wherever you click. This blue pin will populate the location field with the correct coordinates, so click away!
+
+Once you’ve perfected your entry, hit the submit button and the correct icon will appear in the location you’ve specified. No worries if you made a mistake or an event was cancelled, just go ahead and click the delete button. Events are saved until a user deletes them, unless you are running it locally.
+
+ That's harvardhive.com - a visual hub for events around campus!
+
+
