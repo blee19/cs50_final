@@ -174,8 +174,6 @@ $(function initmap() {
         event.preventDefault();
 
         window.form_data = $('#form').serialize();
-        console.log("form data:", form_data);
-        console.log('marker:', marker);
 
         // ajax post request for the submit sub-url
         $.ajax({
@@ -220,8 +218,6 @@ $(function initmap() {
     // when page is refreshed, it goes to this url, pulls a json of the previously added markers
     $.getJSON(Flask.url_for("query"))
     .done(function(data, textStatus, jqXHR) {
-
-        console.log('worked', data);
         // add marker for each saved event
         for (let k = 0; k < data.length; k++) {
             addMarker(data[k]);
@@ -246,7 +242,6 @@ function deleteMarker(markerId) {
             for (let i=0; i<markers.length; i++) {
                 
                 if (markers[i].id === markerId) {
-                    console.log(markerId, markers[i]);
                     markers[i].setMap(null);
                 }
             }
