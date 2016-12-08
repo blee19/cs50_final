@@ -4,12 +4,17 @@ This site is a hub for what is going on on campus. It's up and running at
 harvardhive.com, so to access it, just type that into your browser and it 
 should bring you to the right place.
 
-To run the site locally: first, download the code from https://github.com/
-blee19/cs50_final. Open terminal on your computer and navigate to the 
-cs50_final folder. Once in there, use ". venv/bin/activate" to activate the 
-virtual environment. Once activated, use "flask run" to run it locally by copy
-and pasting the localhost address into your browser. We are assuming you are
-using python 3.5.2 or greater.
+To run the site locally: 
+In your terminal, "git clone https://github.com/blee19/cs50_final.git". 
+Once cloned, navigate into the cs50_final folder. Then, use "virtualenv venv" 
+and make sure you are creating the virtualenv via python 3.5.2 or greater. If 
+virtualenv is not already installed, use "pip3 install virtualenv" to install 
+it. Next, use ". venv/bin/activate" to activate the virtual environment. Once
+activated, you'll need to use "export FLASK_APP=application.py". 
+Then, retrieve a google maps API key from 
+https://developers.google.com/maps/documentation/javascript/get-api-key and 
+then use "export API_KEY=(your API key here)". After that, use "flask run" to 
+run it locally by copy and pasting the localhost address into your browser.
 
 The whole site itself is an interactive map where all of the events are 
 stored. Take a second and click around. There are 4 types of events, each with 
