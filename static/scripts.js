@@ -4,9 +4,9 @@ var map;
 // markers for map
 var markers = [];
 
+// my clicking marker
 var marker;
 
-// id
 // keep track of markers
 var marker_counter = 0;
 
@@ -157,9 +157,6 @@ $(function initmap() {
     map.mapTypes.set('styled_map', styledMapType);
     map.setMapTypeId('styled_map');
 
-    // configure UI once Google Map is idle (i.e., loaded)
-    google.maps.event.addListenerOnce(map, "idle", configure);
-
     google.maps.event.addListener(map, "click", function(event) {
         // this fits in the value in the html tag of id 'position' with 
         // the values of the event's lat and lng, automatically updating
@@ -172,41 +169,41 @@ $(function initmap() {
     // #submitButton is id of button tag in index.html
     // when submit button is clicked
     $("#submitButton").click(function (event) {
-        // to check and print values
-        // console.log("event:", event);
 
+        // prevents website/submit from opening
         event.preventDefault();
 
         window.form_data = $('#form').serialize();
-        console.log("form data:", form_data);
-        console.log('marker:', marker);
+
+        // ajax post request for the submit sub-url
         $.ajax({
             url: '/submit',
             type: 'post',
             dataType: 'json',
             data: form_data,
+
+            // if successful, run this function
             success: function(data) {
-                console.log('eventID:', data);
+
                 // submit these data in json to addMarker
                 let eventData = {
                     id: data.eventID,
-                    eventType: $('#eventType').val(),
-                    eventName: $('#eventName').val(),
+                    event_type: $('#eventType').val(),
+                    event_name: $('#eventName').val(),
                     latitude: marker.position.lat(), 
                     longitude: marker.position.lng(),
-                    time: $('#datetimepicker').val()
+                    date_time: $('#datetimepicker').val()
                 };
                 // add marker with correct information
                 addMarker(eventData);
             },
+            // if error, report that submitting is not possible
             error: function (request, status, error) {
                 console.log('submit error:', request.responseText);
 
                 alert('Error: One or more invalid or empty fields');
             }
-
         });
-
     });
     
     // delete marker when delete button is clicked
@@ -218,41 +215,22 @@ $(function initmap() {
         };
     });
 
-    // 
+    // when page is refreshed, it goes to this url, pulls a json of the previously added markers
     $.getJSON(Flask.url_for("query"))
     .done(function(data, textStatus, jqXHR) {
-
-        // console.log('worked', data);
-        // call typeahead's callback with search results (i.e., places)
+        // add marker for each saved event
         for (let k = 0; k < data.length; k++) {
-            console.log("data", data[k]);
             addMarker(data[k]);
-            
         };
-    
     })
+    // in case it fails
     .fail(function(jqXHR, textStatus, errorThrown) {
-
         // log error to browser's console
-        console.log('fail', errorThrown);
-
-        // call typeahead's callback with no results
-        
-    });
-
-    // makes the submit button darker if you hover over it
-    $(document).ready(function() {
-        $('button').mouseenter(function() {
-            $('button').fadeTo('fast', 1);
-        });
-        
-        $('button').mouseleave(function() {
-            $('button').fadeTo('fast', 1);
-        });
+        console.log('fail', errorThrown);       
     });
 });
 
-// delete marker 
+// delete marker function
 function deleteMarker(markerId) {
     let parameters = {
         eventID: markerId
@@ -260,19 +238,17 @@ function deleteMarker(markerId) {
 
     $.getJSON(Flask.url_for("delete"), parameters)
         .done(function(data, textStatus, jqXHR) {
-            // server delete successfuly, you will need to delete it from browser screen
-
+            // after server deletes from sql successfully, I will need to delete it from map screen
             for (let i=0; i<markers.length; i++) {
                 
                 if (markers[i].id === markerId) {
-                    console.log(markerId, markers[i]);
                     markers[i].setMap(null);
                 }
             }
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
 
-            // log error to browser's console
+            // if fail, log error to browser's console
             console.log(errorThrown.toString());
         });
 }
@@ -300,14 +276,14 @@ function placeMarker(location) {
 }
 
 /**
- * Adds marker for place to map.
+ * Adds marker for each submitted event to map.
  */
  function addMarker(data) {
-
-    if (data.eventType === 'Free Food Event') {
+    // change the icon for each type of event
+    if (data.event_type === 'Free Food Event') {
         var icon = 'http://maps.google.com/mapfiles/ms/micons/restaurant.png'
 
-    } else if (data.eventType === 'Academic Event') {
+    } else if (data.event_type === 'Academic Event') {
         var icon = {
             url: 'http://maps.google.com/mapfiles/kml/pal3/icon30.png',
             size: new google.maps.Size(32, 32),
@@ -315,7 +291,7 @@ function placeMarker(location) {
             anchor: new google.maps.Point(16, 32)
         }
 
-    } else if (data.eventType === 'Celebrity Sighting'){
+    } else if (data.event_type === 'Celebrity Sighting'){
         var icon = {
             url: 'https://d30y9cdsu7xlg0.cloudfront.net/png/21661-200.png',
             scaledSize: new google.maps.Size(28, 28),
@@ -331,230 +307,26 @@ function placeMarker(location) {
             anchor: new google.maps.Point(16, 32)
         }
     }
-
+    // instantiate that marker
     let mk = new google.maps.Marker({
         map: map,
         position: {"lat": data.latitude,"lng": data.longitude},
         id: data.id,
         icon: icon
     });
-    // console.log(mk);
+
+    // push globally
     markers.push(mk);
-    let deleteButton = '<p> <b>' + data.eventName + ' </b> </p>' +
-    '<p>' + data.eventType + '</p>' +
-    '<p>' + data.time + '</p>' +
+
+    // create the info window
+    let info_window = '<p> <b>' + data.event_name + ' </b> </p>' +
+    '<p>' + data.event_type + '</p>' +
+    '<p>' + data.date_time + '</p>' +
     '<button id="deleteButton" data-id="' + data.id + '">Delete</button>';
 
+    // click on event - get that info_window
     google.maps.event.addListener(mk, 'click', function () {
-        info.setContent(deleteButton);
+        info.setContent(info_window);
         info.open(map, mk);
     });
- }
-
-
-// // Sets the map on all markers in the array.
-// function setMapOnAll(map) {
-//     for (let i = 0; i < markers.length; i++) {
-//       markers[i].setMap(map);
-//     }
-// }
-
-// // Removes the markers from the map, but keeps them in the array.
-// function clearMarkers() {
-//     setMapOnAll(null);
-// }
-
-
-// // Shows any markers currently in the array.
-// function showMarkers() {
-//     setMapOnAll(map);
-// }
-
-// // Deletes all markers in the array by removing references to them.
-// function deleteMarkers() {
-//     clearMarkers();
-//     markers = [];
-// }
-
-
-/**
- * Configures application.
- */
-function configure()
-{
-    // update UI after map has been dragged
-    google.maps.event.addListener(map, "dragend", function() {
-
-        // if info window isn't open
-        // http://stackoverflow.com/a/12410385
-        if (!info.getMap || !info.getMap())
-        {
-            update();
-        }
-    });
- 
-    // update UI after zoom level changes
-    google.maps.event.addListener(map, "zoom_changed", function() {
-        update();
-    });
-
-    // remove markers whilst dragging
-    google.maps.event.addListener(map, "dragstart", function() {
-        // removeMarkers();
-    });
-
-    // configure typeahead
-    $("#q").typeahead({
-        highlight: false,
-        minLength: 1
-    },
-    {
-        display: function(suggestion) { return null; },
-        limit: 10,
-        source: search,
-        templates: {
-            suggestion: Handlebars.compile(
-                
-                // straight from Malan's mouth
-                "<div>" +
-                "{{place_name}}, {{admin_name1}}, {{postal_code}}" +
-                "</div>"
-            )
-        }
-    });
-
-    // re-center map after place is selected from drop-down
-    $("#q").on("typeahead:selected", function(eventObject, suggestion, name) {
-
-        // set map's center
-        map.setCenter({lat: parseFloat(suggestion.latitude), lng: parseFloat(suggestion.longitude)});
-
-        // update UI
-        update();
-    });
-
-    // hide info window when text box has focus
-    $("#q").focus(function(eventData) {
-        info.close();
-    });
-
-    // re-enable ctrl- and right-clicking (and thus Inspect Element) on Google Map
-    // https://chrome.google.com/webstore/detail/allow-right-click/hompjdfbfmmmgflfjdlnkohcplmboaeo?hl=en
-    document.addEventListener("contextmenu", function(event) {
-        event.returnValue = true; 
-        event.stopPropagation && event.stopPropagation(); 
-        event.cancelBubble && event.cancelBubble();
-    }, true);
-
-    // update UI
-    update();
-
-    // give focus to text box
-    $("#q").focus();
-}
-
-/**
- * Removes markers from map.
- */
-function removeMarkers()
-{
-    // for marker, set null
-    for(let i = 0; i< markers.length; i++) {
-        markers[i].setMap(null);
-    }
-}
-
-/**
- * Searches database for typeahead's suggestions.
- */
-function search(query, syncResults, asyncResults)
-{
-    // get places matching query (asynchronously)
-    let parameters = {
-        q: query
-    };
-    $.getJSON(Flask.url_for("search"), parameters)
-    .done(function(data, textStatus, jqXHR) {
-     
-        // call typeahead's callback with search results (i.e., places)
-        asyncResults(data);
-    })
-    .fail(function(jqXHR, textStatus, errorThrown) {
-
-        // log error to browser's console
-        console.log(errorThrown.toString());
-
-        // call typeahead's callback with no results
-        asyncResults([]);
-    });
-}
-
-/**
- * Shows info window at marker with content.
- */
-function showInfo(marker, content)
-{
-    // start div
-    var div = "<div id='info'>";
-    if (typeof(content) == "undefined")
-    {
-        // http://www.ajaxload.info/
-        div += "<img alt='loading' src='/static/ajax-loader.gif'/>";
-    }
-    else
-    {
-        div += content;
-    }
-
-    // end div
-    div += "</div>";
-
-    // set info window's content
-    info.setContent(div);
-
-    // open info window (if not already open)
-    info.open(map, marker);
-}
-
-/**
- * Updates UI's markers.
- */
-function update() 
-{
-    // get map's bounds
-    var bounds = map.getBounds();
-    var ne = bounds.getNorthEast();
-    var sw = bounds.getSouthWest();
-
-    // get places within bounds (asynchronously)
-    let parameters = {
-        ne: ne.lat() + "," + ne.lng(),
-        q: $("#q").val(),
-        sw: sw.lat() + "," + sw.lng()
-    };
-    // $.getJSON(Flask.url_for("update"), parameters)
-    // .done(function(data, textStatus, jqXHR) {
-
-    //    // remove old markers from map
-    //    removeMarkers();
-
-    //    // add new markers to map
-    //    for (var i = 0; i < data.length; i++)
-    //    {
-    //        addMarker(data[i]);
-    //    }
-    // })
-    // .fail(function(jqXHR, textStatus, errorThrown) {
-
-    //     // log error to browser's console
-    //     console.log(errorThrown.toString());
-    // });
-};
-
-
-/*
-* getting variables from flask into html into this scripts.js file
-*/
-function myFunc(vars) {
-    return vars
 }

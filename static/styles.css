@@ -42,10 +42,6 @@ html, body, #map-canvas, .container-fluid
     text-align: center;
 }
 
-/*#eventType {
-    option: center;
-}*/
-
 #position {
     text-align: center;
 }
@@ -56,35 +52,10 @@ html, body, #map-canvas, .container-fluid
     margin: 0;
 }
 
-/* stylize text box */
-
-/* #name this is ID 
-   .form-group is a class
-*/
-
-/*/*#floating-panel /*having this makes a box of 3 hide, show and delete markers
-{
-    position: absolute;
-    top: 10px;
-    left: 25%;
-    z-index: 5;
-    background-color: #fff;
-    padding: 5px;
-    border: 1px solid #999;
-    text-align: center;
-    font-family: 'Roboto','sans-serif';
-    line-height: 30px;
-    padding-left: 10px;
-}*/
-
-
 #eventName
 {
     /* override typeahead.js's transparent background */
     background-color: #ffffff !important;
-
-    /* text box's width */
-    /*width: 300px;*/
 }
 
 #form .form-control
@@ -98,7 +69,7 @@ html, body, #map-canvas, .container-fluid
     /* no margin around this element */
     margin: 0;
 
-    /* allow scrollbars as needed */
+     /*allow scrollbars as needed */
     overflow: auto;
 }
 #info ul
