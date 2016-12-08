@@ -1,6 +1,5 @@
 import os
-import re
-from flask import Flask, jsonify, render_template, request, url_for, redirect
+from flask import Flask, jsonify, render_template, request
 from flask_jsglue import JSGlue
 import sqlite3
 from helpers import lookup
@@ -33,9 +32,9 @@ def index():
 # delete event upon clicking delete button
 @app.route("/delete")
 def delete():
+    """Delete the event listed on the map"""
     
     eventID = request.args.get("eventID")
-
     db.execute('DELETE FROM events WHERE id = ' + eventID)
     conn.commit()
 
@@ -83,55 +82,7 @@ def query():
 
     # return JSON format of event data entered by user
     return jsonify(marker_data)
-    
 
-
-@app.route("/update")
-def update():
-    """Find up to 10 places within view."""
-
-    # ensure parameters are present
-    if not request.args.get("sw"):
-        raise RuntimeError("missing sw")
-    if not request.args.get("ne"):
-        raise RuntimeError("missing ne")
-
-    # ensure parameters are in lat,lng format
-    if not re.search("^-?\d+(?:\.\d+)?,-?\d+(?:\.\d+)?$", request.args.get("sw")):
-        raise RuntimeError("invalid sw")
-    if not re.search("^-?\d+(?:\.\d+)?,-?\d+(?:\.\d+)?$", request.args.get("ne")):
-        raise RuntimeError("invalid ne")
-
-    # explode southwest corner into two variables
-    (sw_lat, sw_lng) = [float(s) for s in request.args.get("sw").split(",")]
-
-    # explode northeast corner into two variables
-    (ne_lat, ne_lng) = [float(s) for s in request.args.get("ne").split(",")]
-
-    # find 10 cities within view, pseudorandomly chosen if more within view
-    if (sw_lng <= ne_lng):
-
-        # doesn't cross the antimeridian
-        rows = db.execute("""SELECT * FROM places
-            WHERE :sw_lat <= latitude AND latitude <= :ne_lat AND (:sw_lng <= longitude AND longitude <= :ne_lng)
-            GROUP BY country_code, place_name, admin_code1
-            ORDER BY RANDOM()
-            LIMIT 10""",
-            sw_lat=sw_lat, ne_lat=ne_lat, sw_lng=sw_lng, ne_lng=ne_lng)
-
-    else:
-
-        # crosses the antimeridian
-        rows = db.execute("""SELECT * FROM places
-            WHERE :sw_lat <= latitude AND latitude <= :ne_lat AND (:sw_lng <= longitude OR longitude <= :ne_lng)
-            GROUP BY country_code, place_name, admin_code1
-            ORDER BY RANDOM()
-            LIMIT 10""",
-            sw_lat=sw_lat, ne_lat=ne_lat, sw_lng=sw_lng, ne_lng=ne_lng)
-
-    # output places as JSON
-    return jsonify(rows)
-
+# running app properly
 if __name__ == "__main__":
-    # port = int(os.environ.get("PORT", 5000))
     app.run(debug=True, use_reloader=True)
