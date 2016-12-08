@@ -1,3 +1,5 @@
+Welcome to HARVARD HIVE! A site helping you find events going on around Harvard.
+
 This is Christina Gao and Brandon Lee's CS50 final project.
 
 The map is centered around Harvard Yard. 
