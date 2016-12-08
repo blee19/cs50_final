@@ -1,0 +1,42 @@
+We started this project hoping to create, using the google maps API, a way for Harvard students to visualize the Harvard turkey sightings around campus. We were inspired by the site goose-watch.uwaterloo.ca, and hoped to create something of the same idea.
+
+So, first, after a few failures of using a open source Python library called 'flask-google-maps', I decided to pull straight from the mashup pset from the final cs50 pset. Literally, I began by downloading the entire mashup folder from the CS50 IDE. 
+
+Then, I began pulling the barebones of the site away. I didn't like the formatting of the map, so I began scavenging through the gmaps API documentation.
+
+Things that I needed to do (high priority):
+
+1. Form on the page that allowed people to submit events
+2. Map that allows people to see events. Most importantly, the events don't disappear after you refresh or leave the site.
+
+(Medium priority):
+1. Different icons would be cool
+2. A custom URL
+
+(Things that I wanted to do but didn't have time to, but will definitely be doing later (J-term?))
+3. Login and Registration page
+4. You can only delete the events that you put up
+5. Markers would only show up within a week of the time.
+
+At first, I debated between Flask and Django, and stuck with Flask since it is so simple, and I wouldn't have to worry about the Python back-end so much. I also decided to use the sqlite3 library with Python, but the way I got the database to work required some 'finessing.' (I created a table in the CS50 IDE via phpliteadmin3, and downloaded that .db file into my local directory).
+
+I'll go over the main docs here - 
+
+1. application.py
+This has three routes:
+	Index. This is the home page, what you first see. What was most important for us was to render the index.html template.
+	Delete. This was a sql query that deleted the corresponding event. 
+	Submit. This allowed users to input an event. Later, I added a query that selected the most recent insertion. This allowed me to post the event on the website immediately. This also made me realize that I would need to add an ID field onto my table. 
+
+2. scripts.js
+This file first sets up global variables I will need later, and then inputs a long series of specific modifications to the map (we wanted it to look special, ok?). We then added things that made the site more 'user-friendly', such as a latitude and longitude field that was input immediately.
+
+An important aspect to our design was the click of the submit button. When this happened, we needed to create a json that would be sent to our python app. This was done with an ajax post request. 
+
+For deleting and querying, I used getJSON functions. Delete had to return a json no matter what, so I made it return a simple 'happy' message just to console.log it and see if it was working properly. In query, I took all of the submissions in the database and jsonified them, which was read by scripts.js and acted upon (addMarker for each of the rows in the database).
+
+Index.html ended up being a difficult thing to work with. Bootstrap doc was difficult to understand because I didn't have much front-end experience. I had a hard time figuring out how to overlay the site, and especially how to download the datetime calendar thing that pops up automatically when you click on Date and Time. I wanted the buttons at the top and that's where I ended up putting them with a lot of assistance from others. 
+
+styles.css was helpful in managing the prettifying of the layout of the page. Pretty self explanatory - we wanted the text in the form to be in the middle, etc.
+
+And that's our project! Enjoy!
